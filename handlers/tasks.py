@@ -1,12 +1,7 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import APIRouter
 
 router = APIRouter(prefix="/tasks", tags=["tasks"])
 
-@router.get("/all")
+@router.get("")
 async def get_tasks():
-    return {"massage": "ok"}
-
-
-@router.post("/")
-async def create_tasks():
-    return {"text": "app is working"}
+    return []
