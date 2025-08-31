@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, status
 from schema.task import Task
 from fixtures import tasks as fixture_tasks
 
@@ -31,3 +31,12 @@ async def update_task(task_id: int, name: str):
         if task["id"] == task_id:
             task["name"] = name
             return task
+
+
+@router.delete("/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_task(task_id: int):
+    for index, task in enumerate(fixture_tasks):
+        if task["id"] == task_id:
+            del fixture_tasks[index]
+            return {"message": "task delete"}
+    return {"message": "task not found"}
