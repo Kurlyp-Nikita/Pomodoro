@@ -13,4 +13,13 @@ async def get_tasks():
     return fixture_tasks
 
 
+@router.post(
+    "/",
+    response_model=Task
+)
+async def create_task(task: Task):
+    fixture_tasks.append(task)
+    return task
+
+
 
