@@ -22,4 +22,12 @@ async def create_task(task: Task):
     return task
 
 
-
+@router.patch(
+    "/{task_id}",
+    response_model=Task
+)
+async def update_task(task_id: int, name: str):
+    for task in fixture_tasks:
+        if task["id"] == task_id:
+            task["name"] = name
+            return task
