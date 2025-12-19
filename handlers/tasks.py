@@ -11,18 +11,12 @@ router = APIRouter(prefix="/tasks", tags=["tasks"])
     response_model=list[Task]
 )
 async def get_tasks():
+    result_tasks: list[Task] = []
     cursor = get_db_connection().cursor()
     tasks = cursor.execute("SELECT * FROM Tasks").fetchall()
 
-    result_tasks = []
     for task in tasks:
-        task_dict = {
-            "id": task[0],
-            "name": task[1],
-            "pomodoro_count": task[2],
-            "category_id": task[3],
-        }
-        result_tasks.append(task_dict)
+        result_tasks.append(Task(**task))
     return result_tasks
 
 
