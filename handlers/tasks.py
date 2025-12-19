@@ -16,7 +16,12 @@ async def get_tasks():
     tasks = cursor.execute("SELECT * FROM Tasks").fetchall()
 
     for task in tasks:
-        result_tasks.append(Task(**task))
+        result_tasks.append(Task(
+            id=task[0],
+            name=task[1],
+            pomodoro_count=task[2],
+            category_id=task[3],
+        ))
     return result_tasks
 
 
