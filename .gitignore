@@ -1,24 +1,11 @@
 # Python
 __pycache__/
 *.py[cod]
-*.class
 *.so
 .Python
 build/
-develop-eggs/
 dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
 *.egg-info/
-.installed.cfg
-*.egg
 
 # Virtual Environment
 .venv/
@@ -30,13 +17,15 @@ env/
 .vscode/
 *.swp
 *.swo
-*~
+
+# Database
+*.db
+*.db-*
+*.sqlite
+*.sqbpro
 
 # Environment variables
 .env
+*.env
 .dev.env
 .prod.env
-
-# Logs
-*.log
-
