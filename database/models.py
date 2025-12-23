@@ -1,3 +1,4 @@
+from typing import Optional
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
@@ -18,5 +19,5 @@ class Categories(Base):
     __tablename__ = "Categories"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    type: Mapped[str]
+    type: Mapped[Optional[str]]  # необязательное
     name: Mapped[str]
