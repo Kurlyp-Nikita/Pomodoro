@@ -12,7 +12,7 @@ router = APIRouter(prefix="/tasks", tags=["tasks"])
 )
 async def get_tasks():
     result_tasks: list[Task] = []
-    cursor = get_db_connection().cursor()
+    cursor = get_db_session().cursor()
     tasks = cursor.execute("SELECT * FROM Tasks").fetchall()
 
     for task in tasks:

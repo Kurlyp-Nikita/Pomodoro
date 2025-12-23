@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Mapped, DeclarativeMeta, mapped_column, declarative_base
+from sqlalchemy.orm import Mapped, mapped_column, declarative_base
 
 Base = declarative_base()
 
