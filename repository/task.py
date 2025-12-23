@@ -23,6 +23,12 @@ class TaskRepository:
             task: Tasks = session.execute(select(Tasks).where(Tasks.id == task_id)).scalar()
         return task
 
+    def create_task(self, task: Tasks) -> Tasks:
+        with self.db_session() as session:
+            session.add(task)
+            session.commit()
+        return task
+
 def get_tasks_repository() -> TaskRepository:
     db_session = get_db_session()
     return TaskRepository(db_session)
