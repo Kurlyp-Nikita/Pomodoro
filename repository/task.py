@@ -2,7 +2,7 @@ from sqlalchemy import select, delete
 from sqlalchemy.orm import Session
 
 from database.database import get_db_session
-from database.models import Tasks
+from database.models import Tasks, Categories
 
 
 class TaskRepository:
@@ -34,6 +34,12 @@ class TaskRepository:
         with self.db_session() as session:
             session.execute(query)
             session.commit()
+
+    def get_task_by_category_name(self, category_name: str) -> list[Tasks]:
+        query = select(Tasks).join(Categories, Tasks.category_id == Categories.id).where(Categories.name== category_name)
+        with self.db_session() as session:
+            task: list[Tasks] = session.execute(query).scalars().all()
+        return task
 
 def get_tasks_repository() -> TaskRepository:
     db_session = get_db_session()
