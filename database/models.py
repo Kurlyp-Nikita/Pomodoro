@@ -1,7 +1,9 @@
-from sqlalchemy.orm import Mapped, DeclarativeMeta, mapped_column
+from sqlalchemy.orm import Mapped, DeclarativeMeta, mapped_column, declarative_base
+
+Base = declarative_base()
 
 
-class Tasks(DeclarativeMeta):
+class Tasks(Base):
     __tablename__ = "Tasks"
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -10,7 +12,7 @@ class Tasks(DeclarativeMeta):
     category_id: Mapped[int]
 
 
-class Categories(DeclarativeMeta):
+class Categories(Base):
     __tablename__ = "Categories"
 
     id: Mapped[int] = mapped_column(primary_key=True)
