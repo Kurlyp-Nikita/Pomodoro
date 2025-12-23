@@ -16,6 +16,6 @@ class Tasks(Base):
 class Categories(Base):
     __tablename__ = "Categories"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int | None] = mapped_column(primary_key=True)
     type: Mapped[int | None] = mapped_column(nullable=True)
     name: Mapped[str]
