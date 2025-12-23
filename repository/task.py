@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from sqlalchemy.orm import Session
 
 from database.database import get_db_session
@@ -28,6 +28,12 @@ class TaskRepository:
             session.add(task)
             session.commit()
         return task
+
+    def delete_task(self, task_id: int) -> None:
+        query = delete(Tasks).where(Tasks.id == task_id)
+        with self.db_session() as session:
+            session.execute(query)
+            session.commit()
 
 def get_tasks_repository() -> TaskRepository:
     db_session = get_db_session()
