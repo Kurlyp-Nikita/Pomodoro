@@ -44,10 +44,9 @@ async def update_task(
     return task_repository.update_task_name(task_id, name)
 
 @router.delete("/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_task(task_id: int):
-    connection = get_db_session()
-    cursor = connection.cursor()
-    cursor.execute("DELETE FROM Tasks WHERE id=?", (task_id,))
-    connection.commit()
-    connection.close()
+async def delete_task(
+        task_id: int,
+        task_repository: Annotated[TaskRepository, Depends(get_tasks_repository)]
+):
+    task_repository.delete_task(task_id)
     return {"message": "task deleted successfully"}
