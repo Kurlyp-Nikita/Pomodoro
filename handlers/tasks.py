@@ -5,14 +5,14 @@ from fastapi import APIRouter, status, Depends
 from database.database import get_db_session
 from repository.task import TaskRepository
 from repository.task import get_tasks_repository
-from schema.task import Task
+from schema.task import TaskShema
 
 router = APIRouter(prefix="/tasks", tags=["tasks"])
 
 
 @router.get(
     "/all",
-    response_model=list[Task]
+    response_model=list[TaskShema]
 )
 async def get_tasks(tasks_repository: Annotated[TaskRepository, Depends(get_tasks_repository)]):
     tasks = tasks_repository.get_tasks()
@@ -21,21 +21,19 @@ async def get_tasks(tasks_repository: Annotated[TaskRepository, Depends(get_task
 
 @router.post(
     "/",
-    response_model=Task
+    response_model=TaskShema
 )
-async def create_task(task: Task):
-    conection = get_db_session()
-    cursor = conection.cursor()
-    cursor.execute("INSERT INTO Tasks (name, pomodoro_count, category_id) VALUES (?, ?, ?)",
-                   (task.name, task.pomodoro_count, task.category_id))
-    conection.commit()
-    conection.close()
+async def create_task(
+        task: TaskShema,
+        task_repository: Annotated[TaskRepository, Depends(get_tasks_repository)]
+):
+    task_repository.create_task(task)
     return task
 
 
 @router.patch(
     "/{task_id}",
-    response_model=Task
+    response_model=TaskShema
 )
 async def update_task(task_id: int, name: str):
     connection = get_db_session()
@@ -49,7 +47,7 @@ async def update_task(task_id: int, name: str):
     cursor.execute("SELECT * FROM Tasks WHERE id=?", (task_id,))
     task = cursor.fetchone()
     connection.close()
-    return Task(
+    return TaskShema(
         id=task[0],
         name=task[1],
         pomodoro_count=task[2],
