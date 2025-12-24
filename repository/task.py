@@ -1,8 +1,10 @@
 from sqlalchemy import select, delete
 from sqlalchemy.orm import Session
+from sqlalchemy.orm.sync import update
 
 from database.database import get_db_session
 from database.models import Tasks, Categories
+from schema import task
 from schema.task import TaskShema
 
 
@@ -42,6 +44,13 @@ class TaskRepository:
         with self.db_session() as session:
             task: list[Tasks] = session.execute(query).scalars().all()
         return task
+
+    def update_task_name(self, task_id: int, name: str) -> Tasks | None:
+        with self.db_session() as session:
+            query = update(Tasks).where(Tasks.id == task_id).values(name=name).returning(Tasks.id)
+            task_id: int = session.execute(query).scalar_one_or_none()
+            return self.get_task(task_id)
+
 
 def get_tasks_repository() -> TaskRepository:
     db_session = get_db_session()

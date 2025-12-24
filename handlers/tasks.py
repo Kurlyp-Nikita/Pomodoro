@@ -36,25 +36,13 @@ async def create_task(
     "/{task_id}",
     response_model=TaskShema
 )
-async def update_task(task_id: int, name: str):
-    connection = get_db_session()
-    cursor = connection.cursor()
-
-    # Обновляем запись
-    cursor.execute("UPDATE Tasks SET name=? WHERE id=?", (name, task_id))
-    connection.commit()
-
-    # Получаем обновленную запись (перед закрытием)
-    cursor.execute("SELECT * FROM Tasks WHERE id=?", (task_id,))
-    task = cursor.fetchone()
-    connection.close()
-    return TaskShema(
-        id=task[0],
-        name=task[1],
-        pomodoro_count=task[2],
-        category_id=task[3],
-    )
-
+async def update_task(
+        task_id: int,
+        name: str,
+        task_repository: Annotated[TaskRepository, Depends(get_tasks_repository)
+):
+    task = task_repository.update_task_name(task_id, name)
+    return task
 
 @router.delete("/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_task(task_id: int):
