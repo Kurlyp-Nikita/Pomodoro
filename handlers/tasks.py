@@ -27,7 +27,8 @@ async def create_task(
         task: TaskShema,
         task_repository: Annotated[TaskRepository, Depends(get_tasks_repository)]
 ):
-    task_repository.create_task(task)
+    task_id = task_repository.create_task(task)
+    task.id = task_id
     return task
 
 

@@ -24,11 +24,12 @@ class TaskRepository:
             task: Tasks = session.execute(select(Tasks).where(Tasks.id == task_id)).scalar()
         return task
 
-    def create_task(self, task: TaskShema) -> None:
+    def create_task(self, task: TaskShema) -> int:
         task_model = Tasks(name=task.name, pomodoro_count=task.pomodoro_count, category_id=task.category_id)
         with self.db_session() as session:
             session.add(task_model)
             session.commit()
+            return task_model.id
 
     def delete_task(self, task_id: int) -> None:
         query = delete(Tasks).where(Tasks.id == task_id)
