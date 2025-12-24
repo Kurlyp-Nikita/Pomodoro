@@ -10,7 +10,7 @@ class TaskRepository:
     def __init__(self, db_session: Session):
         self.db_session = db_session
 
-    def get_tasks(self, task_id: int):
+    def get_tasks(self):
 
         """Получение всех тасок"""
 

@@ -1,7 +1,11 @@
-from fastapi import APIRouter, status
+from typing import Annotated
 
-from schema.task import Task
+from fastapi import APIRouter, status, Depends
+
 from database.database import get_db_session
+from repository.task import TaskRepository
+from repository.task import get_tasks_repository
+from schema.task import Task
 
 router = APIRouter(prefix="/tasks", tags=["tasks"])
 
@@ -10,19 +14,9 @@ router = APIRouter(prefix="/tasks", tags=["tasks"])
     "/all",
     response_model=list[Task]
 )
-async def get_tasks():
-    result_tasks: list[Task] = []
-    cursor = get_db_session().cursor()
-    tasks = cursor.execute("SELECT * FROM Tasks").fetchall()
-
-    for task in tasks:
-        result_tasks.append(Task(
-            id=task[0],
-            name=task[1],
-            pomodoro_count=task[2],
-            category_id=task[3],
-        ))
-    return result_tasks
+async def get_tasks(tasks_repository: Annotated[TaskRepository, Depends(get_tasks_repository)]):
+    tasks = tasks_repository.get_tasks()
+    return tasks
 
 
 @router.post(
@@ -30,7 +24,7 @@ async def get_tasks():
     response_model=Task
 )
 async def create_task(task: Task):
-    conection = get_db_connection()
+    conection = get_db_session()
     cursor = conection.cursor()
     cursor.execute("INSERT INTO Tasks (name, pomodoro_count, category_id) VALUES (?, ?, ?)",
                    (task.name, task.pomodoro_count, task.category_id))
@@ -44,7 +38,7 @@ async def create_task(task: Task):
     response_model=Task
 )
 async def update_task(task_id: int, name: str):
-    connection = get_db_connection()
+    connection = get_db_session()
     cursor = connection.cursor()
 
     # Обновляем запись
@@ -65,7 +59,7 @@ async def update_task(task_id: int, name: str):
 
 @router.delete("/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_task(task_id: int):
-    connection = get_db_connection()
+    connection = get_db_session()
     cursor = connection.cursor()
     cursor.execute("DELETE FROM Tasks WHERE id=?", (task_id,))
     connection.commit()
