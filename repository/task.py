@@ -1,6 +1,5 @@
-from sqlalchemy import select, delete
+from sqlalchemy import select, delete, update
 from sqlalchemy.orm import Session
-from sqlalchemy.orm.sync import update
 
 from database.database import get_db_session
 from database.models import Tasks, Categories
@@ -32,7 +31,7 @@ class TaskRepository:
             session.commit()
             return task_model.id
 
-    def delete_task(self, task_id: int) -> None:
+    def delete_task(self,task_id: int) -> None:
         query = delete(Tasks).where(Tasks.id == task_id)
         with self.db_session() as session:
             session.execute(query)
@@ -44,10 +43,11 @@ class TaskRepository:
             task: list[Tasks] = session.execute(query).scalars().all()
         return task
 
-    def update_task_name(self, task_id: int, name: str) -> Tasks | None:
+    def update_task_name(self, task_id: int, name: str) -> Tasks:
+        query = update(Tasks).where(Tasks.id == task_id).values(name=name).returning(Tasks.id)
         with self.db_session() as session:
-            query = update(Tasks).where(Tasks.id == task_id).values(name=name).returning(Tasks.id)
             task_id: int = session.execute(query).scalar_one_or_none()
+            session.commit()
             return self.get_task(task_id)
 
 
