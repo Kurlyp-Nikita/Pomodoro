@@ -4,7 +4,6 @@ from sqlalchemy.orm.sync import update
 
 from database.database import get_db_session
 from database.models import Tasks, Categories
-from schema import task
 from schema.task import TaskShema
 
 
