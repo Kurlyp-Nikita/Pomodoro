@@ -1,12 +1,12 @@
+from fastapi import APIRouter, Depends
 from typing import Annotated
 
-from fastapi import APIRouter, status, Depends
+from starlette import status
 
-from database.database import get_db_session
-from repository.cache_tasks import TaskCache
-from repository.task import TaskRepository, get_tasks_cache_repository
-from repository.task import get_tasks_repository
+from repository.task import TaskRepository
 from schema.task import TaskShema
+from dependencies import get_tasks_service, get_tasks_repository
+from service.task import TaskService
 
 router = APIRouter(prefix="/tasks", tags=["tasks"])
 
@@ -16,18 +16,9 @@ router = APIRouter(prefix="/tasks", tags=["tasks"])
     response_model=list[TaskShema]
 )
 async def get_tasks(
-        tasks_repository: Annotated[TaskRepository, Depends(get_tasks_repository)],
-        task_cache: Annotated[TaskCache, Depends(get_tasks_cache_repository)]
+        task_service: Annotated[TaskService, Depends(get_tasks_service)]
 ):
-    cache_task = task_cache.get_task()
-
-    if cache_task:
-        return cache_task
-    else:
-        tasks = tasks_repository.get_tasks()
-        tasks_shema = [TaskShema.model_validate(task) for task in tasks]
-        task_cache.set_task(tasks_shema)
-        return tasks_shema
+    return task_service.get_tasks()
 
 
 @router.post(
