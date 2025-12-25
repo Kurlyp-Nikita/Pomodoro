@@ -1,3 +1,4 @@
+from typing import List
 from sqlalchemy import select, delete, update
 from sqlalchemy.orm import Session
 from database.models import Tasks, Categories
@@ -6,7 +7,7 @@ class TaskRepository:
     def __init__(self, db_session: Session):
         self.db_session = db_session
 
-    def get_tasks(self):
+    def get_tasks(self) -> List[Tasks]:
         """Получение всех тасок"""
         with self.db_session() as session:
             task: list[Tasks] = session.execute(select(Tasks)).scalars().all()
