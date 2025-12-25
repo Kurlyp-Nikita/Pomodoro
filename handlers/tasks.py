@@ -19,13 +19,13 @@ async def get_tasks(
         tasks_repository: Annotated[TaskRepository, Depends(get_tasks_repository)],
         task_cache: Annotated[TaskCache, Depends(get_tasks_cache_repository)]
 ):
-    tasks = task_cache.get_task()
+    cache_task = task_cache.get_task()
 
-    if tasks:
-        return tasks
+    if cache_task:
+        return cache_task
     else:
         tasks = tasks_repository.get_tasks()
-        tasks_shema = [TaskShema.model_validate(task) for task in tasks ]
+        tasks_shema = [TaskShema.model_validate(task) for task in tasks]
         task_cache.set_task(tasks_shema)
         return tasks_shema
 

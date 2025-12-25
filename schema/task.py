@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel, Field, model_validator
 
 
@@ -5,7 +6,7 @@ class TaskShema(BaseModel):
     id: int
     name: str | None = None
     pomodoro_count: int | None = None
-    category_id: int = Field(exclude=True) # исключили это поле
+    category_id: Optional[int] = None  # Необязательное поле# исключили это поле
 
     class Config:
         from_attributes = True
