@@ -3,7 +3,8 @@ from typing import Annotated
 from fastapi import APIRouter, status, Depends
 
 from database.database import get_db_session
-from repository.task import TaskRepository
+from repository.cache_tasks import TaskCache
+from repository.task import TaskRepository, get_tasks_cache_repository
 from repository.task import get_tasks_repository
 from schema.task import TaskShema
 
@@ -14,9 +15,14 @@ router = APIRouter(prefix="/tasks", tags=["tasks"])
     "/all",
     response_model=list[TaskShema]
 )
-async def get_tasks(tasks_repository: Annotated[TaskRepository, Depends(get_tasks_repository)]):
+async def get_tasks(
+        tasks_repository: Annotated[TaskRepository, Depends(get_tasks_repository)],
+        task_cache: Annotated[TaskCache, Depends(get_tasks_cache_repository)]
+):
     tasks = tasks_repository.get_tasks()
-    return tasks
+    tasks_shema = [TaskShema.model_validate(task) for task in tasks ]
+    task_cache.set_task(tasks_shema)
+    return tasks_shema
 
 
 @router.post(
