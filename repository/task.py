@@ -1,8 +1,9 @@
 from sqlalchemy import select, delete, update
 from sqlalchemy.orm import Session
-
+from cache.accessor import get_redis_connection
 from database.database import get_db_session
 from database.models import Tasks, Categories
+from repository.cache_tasks import TaskCache
 from schema.task import TaskShema
 
 
@@ -54,4 +55,8 @@ class TaskRepository:
 def get_tasks_repository() -> TaskRepository:
     db_session = get_db_session()
     return TaskRepository(db_session)
+
+def get_tasks_cache_repository() -> TaskCache:
+    redis_connection = get_redis_connection()
+    return TaskCache(redis_connection)
 
