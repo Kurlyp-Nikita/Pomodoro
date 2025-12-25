@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Depends
 from typing import Annotated
 from starlette import status
+from repository.cache_tasks import TaskCache
 from repository.task import TaskRepository
 from schema.task import TaskShema
-from dependencies import get_tasks_service, get_tasks_repository
+from dependencies import get_tasks_service, get_tasks_repository, get_tasks_cache_repository
 from service.task import TaskService
 
 router = APIRouter(prefix="/tasks", tags=["tasks"])
@@ -19,16 +20,18 @@ async def get_tasks(
     return task_service.get_tasks()
 
 
-@router.post(
-    "/",
-    response_model=TaskShema
-)
+@router.post("/", response_model=TaskShema)
 async def create_task(
         task: TaskShema,
-        task_repository: Annotated[TaskRepository, Depends(get_tasks_repository)]
+        task_repository: Annotated[TaskRepository, Depends(get_tasks_repository)],
+        task_cache: Annotated[TaskCache, Depends(get_tasks_cache_repository)]
 ):
     task_id = task_repository.create_task(task)
     task.id = task_id
+
+    all_tasks = task_repository.get_tasks()  # Получаем все задачи из БД (включая новую)
+    tasks_schema = [TaskShema.model_validate(t) for t in all_tasks]  # Конвертируем в схемы
+    task_cache.set_task(tasks_schema)  # Обновляем Redis кэш
     return task
 
 

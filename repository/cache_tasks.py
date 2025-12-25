@@ -15,5 +15,7 @@ class TaskCache:
     def set_task(self, tasks: list[TaskShema]):
         task_json = [task.model_dump_json() for task in tasks]
         with self.redis as redis:
+            redis.delete('tasks')
             redis.lpush('tasks', *task_json)
+
 
