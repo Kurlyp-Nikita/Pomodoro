@@ -1,5 +1,5 @@
 from fastapi import FastAPI, APIRouter
-from setings import Settings
+from settings import Settings
 
 router = APIRouter(prefix="/ping", tags=["ping-app, ping-db"])
 
