@@ -1,5 +1,5 @@
 from fastapi import Depends
-from database.database import get_db_session
+from database.accessor import get_db_session
 from cache.accessor import get_redis_connection
 from repository.task import TaskRepository
 from repository.cache_tasks import TaskCache
