@@ -25,7 +25,7 @@ async def login(
 
     except UserNotCorrectPasswordException as e:
         raise HTTPException(
-            status_code=404,
+            status_code=401,
             detail=e.detail
         )
 
