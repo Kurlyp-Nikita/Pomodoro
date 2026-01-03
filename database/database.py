@@ -1,12 +1,6 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from settings import Settings
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
-settings = Settings()
-engine = create_engine(settings.db_url)
-Session = sessionmaker(engine)
+class Base(DeclarativeBase):
+    pass
 
-
-def get_db_session() -> Session:
-    return Session

@@ -1,7 +1,8 @@
 from typing import List
 from sqlalchemy import select, delete, update
 from sqlalchemy.orm import Session
-from database.models import Tasks, Categories
+from models.tasks import Tasks, Categories
+
 
 class TaskRepository:
     def __init__(self, db_session: Session):
