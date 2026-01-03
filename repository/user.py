@@ -1,4 +1,3 @@
-from pydantic import BaseModel
 from dataclasses import dataclass
 from sqlalchemy import insert, select
 from models.user import UserProfile
@@ -6,7 +5,7 @@ from sqlalchemy.orm import Session
 
 
 @dataclass
-class UserRepository(BaseModel):
+class UserRepository:
     db_session: Session
 
     def create_user(self, username: str, password: str, access_token: str) -> UserProfile:
@@ -18,6 +17,8 @@ class UserRepository(BaseModel):
 
         with self.db_session() as session:
             user_id: int = session.execute(query).scalar()
+            session.commit()
+            session.flush()
             return self.get_user(user_id)
 
     def get_user(self, user_id: int) -> UserProfile | None:

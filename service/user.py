@@ -7,7 +7,7 @@ from schema.user import UserLoginShema
 
 @dataclass
 class UserService:
-    user_repository = UserRepository
+    user_repository: UserRepository
 
     def crete_user(self, username: str, password: str) -> UserLoginShema:
         access_token = self._generate_access_token()
