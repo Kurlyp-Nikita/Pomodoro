@@ -1,5 +1,5 @@
+from typing import Annotated
 from fastapi import APIRouter, Depends
-from sqlalchemy.sql.annotation import Annotated
 from dependencies import get_user_service
 from schema.user import UserLoginShema, UserCreateShema
 from service.user import UserService
