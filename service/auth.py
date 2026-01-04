@@ -38,3 +38,10 @@ class AuthService:
         )
         return token
 
+    def get_user_id_from_access_token(self, access_token: str) -> int:
+        payload = jwt.decode(
+            access_token,
+            self.settings.JWT_SECRET_KEY,
+            algorithms=[self.settings.JWT_ENCODE_ALGORITHM]
+        )
+        return payload['user_id']
