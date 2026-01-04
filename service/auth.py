@@ -1,9 +1,11 @@
-from exception import UserNotFoundException, UserNotCorrectPasswordException
+from multiprocessing.managers import Token
+
+from exception import UserNotFoundException, UserNotCorrectPasswordException, TokenExpired, TokenNotCorrect
 from models.user import UserProfile
 from repository.user import UserRepository
 from schema.user import UserLoginShema
 from dataclasses import dataclass
-from jose import jwt
+from jose import jwt, JWTError
 from datetime import timedelta
 import datetime as dt
 
@@ -39,9 +41,16 @@ class AuthService:
         return token
 
     def get_user_id_from_access_token(self, access_token: str) -> int:
-        payload = jwt.decode(
-            access_token,
-            self.settings.JWT_SECRET_KEY,
-            algorithms=[self.settings.JWT_ENCODE_ALGORITHM]
-        )
+        try:
+            payload = jwt.decode(
+                access_token,
+                self.settings.JWT_SECRET_KEY,
+                algorithms=[self.settings.JWT_ENCODE_ALGORITHM]
+            )
+        except JWTError:
+            raise TokenNotCorrect
+
+        if payload['expire'] < dt.datetime.now(dt.UTC).timestamp():
+            raise TokenExpired
+
         return payload['user_id']

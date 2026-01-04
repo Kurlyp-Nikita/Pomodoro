@@ -1,8 +1,9 @@
-from fastapi import Depends, Request, security, Security
+from fastapi import Depends, Request, security, Security, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from database.accessor import get_db_session
 from cache.accessor import get_redis_connection
+from exception import TokenExpired, TokenNotCorrect
 from repository.task import TaskRepository
 from repository.cache_tasks import TaskCache
 from repository.user import UserRepository
@@ -50,6 +51,20 @@ def get_request_user_id(
         auth_service: AuthService = Depends(get_auth_service),
         token: security.http.HTTPAuthorizationCredentials = Security(reusable_oauth2),
 ) -> int | None:
-    user_id = auth_service.get_user_id_from_access_token(token.credentials)
+    try:
+        user_id = auth_service.get_user_id_from_access_token(token.credentials)
+
+    except TokenExpired as e:
+        raise HTTPException(
+            status_code=401,
+            detail=e.detail,
+        )
+
+    except TokenNotCorrect as e:
+        raise HTTPException(
+            status_code=401,
+            detail=e.detail
+        )
+
     return user_id
 
