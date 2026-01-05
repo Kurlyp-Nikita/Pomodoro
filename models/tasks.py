@@ -11,6 +11,7 @@ class Tasks(Base):
     name: Mapped[str]
     pomodoro_count: Mapped[int]
     category_id: Mapped[int] = mapped_column(ForeignKey("Categories.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("UserProfile.id"), nullable=False)
 
 
 class Categories(Base):
