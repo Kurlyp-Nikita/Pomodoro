@@ -39,9 +39,10 @@ async def create_task(
 async def update_task(
         task_id: int,
         name: str,
-        task_repository: Annotated[TaskRepository, Depends(get_tasks_repository)]
+        task_service: Annotated[TaskService, Depends(get_tasks_service)],
+        user_id: int = Depends(get_request_user_id)
 ):
-    return task_repository.update_task_name(task_id, name)
+    return task_service.update_task_name(task_id=task_id, name=name, user_id=user_id)
 
 @router.delete("/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_task(

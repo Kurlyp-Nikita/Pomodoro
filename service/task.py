@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-
+from exception import TaskNotFound
 from repository.cache_tasks import TaskCache
 from repository.task import TaskRepository
 from schema.task import TaskShema, TaskCreateSchema
@@ -26,3 +26,11 @@ class TaskService:
         task = self.task_repository.get_task(task_id)
         return TaskShema.model_validate(task)
 
+    def update_task_name(self, task_id: int, name: str, user_id: int) -> TaskShema:
+        task = self.task_repository.get_user_task(user_id=user_id, task_id=task_id)
+
+        if not task:
+            raise TaskNotFound
+
+        task = self.task_repository.update_task_name(task_id=task_id, name=name)
+        return TaskShema.model_validate(task)
