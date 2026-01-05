@@ -2,6 +2,7 @@ from typing import List
 from sqlalchemy import select, delete, update
 from sqlalchemy.orm import Session
 from models.tasks import Tasks, Categories
+from schema.task import TaskCreateSchema
 
 
 class TaskRepository:
@@ -19,12 +20,13 @@ class TaskRepository:
             task: Tasks = session.execute(select(Tasks).where(Tasks.id == task_id)).scalar()
         return task
 
-    def create_task(self, task):
+    def create_task(self, task: TaskCreateSchema, user_id: int):
         """Принимает любую задачу с полями name, pomodoro_count, category_id"""
         task_model = Tasks(
             name=task.name, 
             pomodoro_count=task.pomodoro_count, 
-            category_id=task.category_id
+            category_id=task.category_id,
+            user_id=user_id
         )
         with self.db_session() as session:
             session.add(task_model)

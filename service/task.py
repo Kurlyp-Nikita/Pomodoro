@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from repository.cache_tasks import TaskCache
 from repository.task import TaskRepository
-from schema.task import TaskShema
+from schema.task import TaskShema, TaskCreateSchema
 
 
 @dataclass
@@ -20,3 +20,9 @@ class TaskService:
             tasks_shema = [TaskShema.model_validate(task) for task in tasks]
             self.task_cache.set_task(tasks_shema)
             return tasks_shema
+
+    def create_task(self, body: TaskCreateSchema, user_id: int):
+        task_id = self.task_repository.create_task(body, user_id)
+        task = self.task_repository.get_task(task_id)
+        return TaskShema.model_validate(task)
+
