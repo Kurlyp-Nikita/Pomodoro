@@ -5,7 +5,7 @@ from starlette import status
 
 from repository.cache_tasks import TaskCache
 from repository.task import TaskRepository
-from schema.task import TaskShema
+from schema.task import TaskShema, TaskCreateSchema
 from dependencies import get_tasks_service, get_tasks_repository, get_tasks_cache_repository, get_request_user_id
 from service.task import TaskService
 
@@ -24,12 +24,11 @@ async def get_tasks(
 
 @router.post("/", response_model=TaskShema)
 async def create_task(
-        task: TaskShema,
-        task_repository: Annotated[TaskRepository, Depends(get_tasks_repository)],
+        body: TaskCreateSchema,
+        task_service: Annotated[TaskService, Depends(get_tasks_service)],
         user_id: int = Depends(get_request_user_id)
 ):
-    task_id = task_repository.create_task(task)
-    task.id = task_id
+    task = task_service.create_task(body, user_id)
     return task
 
 
