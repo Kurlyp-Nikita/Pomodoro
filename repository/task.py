@@ -20,6 +20,12 @@ class TaskRepository:
             task: Tasks = session.execute(select(Tasks).where(Tasks.id == task_id)).scalar()
         return task
 
+    def get_user_task(self, task_id: int, user_id: int) -> Tasks | None:
+        query = select(Tasks).where(Tasks.id == task_id, Tasks.user_id == user_id)
+        with self.db_session() as session:
+            task: Tasks = session.execute(query).scalar_one_or_none()
+        return task
+
     def create_task(self, task: TaskCreateSchema, user_id: int):
         """Принимает любую задачу с полями name, pomodoro_count, category_id"""
         task_model = Tasks(
@@ -52,4 +58,5 @@ class TaskRepository:
         with self.db_session() as session:
             task_id: int = session.execute(query).scalar_one_or_none()
             session.commit()
+            session.flush()
             return self.get_task(task_id)
