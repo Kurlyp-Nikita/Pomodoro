@@ -34,3 +34,10 @@ class TaskService:
 
         task = self.task_repository.update_task_name(task_id=task_id, name=name)
         return TaskShema.model_validate(task)
+
+    def delete_task(self, task_id: int, user_id: int) -> None:
+        task = self.task_repository.get_user_task(user_id=user_id, task_id=task_id)
+
+        if not task:
+            raise TaskNotFound
+        self.task_repository.delete_task(task_id=task_id, user_id=user_id)
