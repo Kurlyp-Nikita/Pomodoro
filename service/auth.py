@@ -17,6 +17,9 @@ class AuthService:
     user_repository: UserRepository
     settings: Settings
 
+    def get_google_redirect_url(self) -> str:
+        return self.settings.google_auth_redirect_url
+
     def login(self, username: str, password: str) -> UserLoginShema:
         user = self.user_repository.get_user_by_username(username)
         self._validate_auth_user(user, password)
