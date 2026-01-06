@@ -1,5 +1,4 @@
-from multiprocessing.managers import Token
-
+from client.google import GoogleClient
 from exception import UserNotFoundException, UserNotCorrectPasswordException, TokenExpired, TokenNotCorrect
 from models.user import UserProfile
 from repository.user import UserRepository
@@ -8,7 +7,6 @@ from dataclasses import dataclass
 from jose import jwt, JWTError
 from datetime import timedelta
 import datetime as dt
-
 from settings import Settings
 
 
@@ -16,6 +14,11 @@ from settings import Settings
 class AuthService:
     user_repository: UserRepository
     settings: Settings
+    google_client: GoogleClient
+
+    def google_auth(self, code: str) -> str:
+        user_data = self.google_client.get_user_info(code)
+        return user_data['access_token']
 
     def get_google_redirect_url(self) -> str:
         return self.settings.google_auth_redirect_url
